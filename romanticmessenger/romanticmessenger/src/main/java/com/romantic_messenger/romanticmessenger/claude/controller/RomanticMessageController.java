@@ -1,5 +1,6 @@
 package com.romantic_messenger.romanticmessenger.claude.controller;
 
+import com.romantic_messenger.romanticmessenger.claude.dto.MessageRequestDTO;
 import com.romantic_messenger.romanticmessenger.claude.dto.MessageResponseDTO;
 import com.romantic_messenger.romanticmessenger.claude.service.RomanticMessageService;
 import jakarta.validation.Valid;
@@ -22,7 +23,7 @@ public class RomanticMessageController {
     }
 
     @PostMapping("")
-    public ResponseEntity<MessageResponseDTO> generateRomanticMessage(@Valid @RequestBody com.romantic_messenger.romanticmessenger.dto.MessageRequestDTO messageRequestDTO) {
+    public ResponseEntity<MessageResponseDTO> generateRomanticMessage(@Valid @RequestBody MessageRequestDTO messageRequestDTO) {
         log.info("generateRomanticMessage: Received request: {}", messageRequestDTO);
         return ResponseEntity.ok(romanticMessageService.createRomanticMessage(messageRequestDTO));
     }

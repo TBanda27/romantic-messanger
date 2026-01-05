@@ -29,6 +29,7 @@ public class PromptGenerator {
             - Make it unique and personal.
             - Message must be in English.
             - Message must be between 100 and 200 words long.
+            - Give the message as a single paragraph, do not use line breaks.
 
             Respond only with the romantic message, without any additional commentary or explanation.
             """;

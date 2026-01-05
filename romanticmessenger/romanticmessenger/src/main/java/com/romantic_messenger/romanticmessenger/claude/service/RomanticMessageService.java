@@ -4,6 +4,7 @@ import com.anthropic.client.AnthropicClient;
 import com.anthropic.models.messages.Message;
 import com.anthropic.models.messages.MessageCreateParams;
 import com.anthropic.models.messages.TextBlock;
+import com.romantic_messenger.romanticmessenger.claude.dto.MessageRequestDTO;
 import com.romantic_messenger.romanticmessenger.claude.utils.PromptGenerator;
 import com.romantic_messenger.romanticmessenger.claude.dto.MessageResponseDTO;
 
@@ -22,7 +23,7 @@ public class RomanticMessageService {
         this.anthropicClient = anthropicClient;
     }
 
-    public MessageResponseDTO createRomanticMessage(@Valid com.romantic_messenger.romanticmessenger.dto.MessageRequestDTO messageRequestDTO) {
+    public MessageResponseDTO createRomanticMessage(@Valid MessageRequestDTO messageRequestDTO) {
         log.info("Creating RomanticMessage request for message: {}", messageRequestDTO);
         MessageCreateParams messageCreateParams = promptGenerator.buildMessageRequest(messageRequestDTO.bookTheme());
         Message response = anthropicClient.messages().create(messageCreateParams);

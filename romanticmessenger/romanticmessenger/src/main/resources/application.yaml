@@ -14,3 +14,9 @@ claude:
   timeout:
     seconds: ${CLAUDE_TIMEOUT_SECONDS:60}
 
+aws:
+  access-key-id: ${AWS_ACCESS_KEY_ID}
+  secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+  region: ${AWS_REGION:us-east-1}
+
+
