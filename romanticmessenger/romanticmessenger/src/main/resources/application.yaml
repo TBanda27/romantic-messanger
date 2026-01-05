@@ -11,4 +11,6 @@ claude:
   model:
     version: ${CLAUDE_MODEL}
   max-tokens: ${CLAUDE_MAX_TOKENS}
+  timeout:
+    seconds: ${CLAUDE_TIMEOUT_SECONDS:60}
 
