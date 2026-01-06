@@ -22,4 +22,9 @@ aws:
     region: ${AWS_S3_REGION:eu-north-1}
     bucket-name: ${AWS_S3_BUCKET_NAME}
 
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  phone-number: ${TWILIO_PHONE_NUMBER}
+
 

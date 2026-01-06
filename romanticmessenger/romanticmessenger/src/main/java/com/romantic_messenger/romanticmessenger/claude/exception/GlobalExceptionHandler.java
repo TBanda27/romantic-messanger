@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.polly.model.PollyException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import com.twilio.exception.ApiException;
+import com.twilio.exception.TwilioException;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -221,6 +223,51 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_GATEWAY.value(),
                 "S3 Storage Error",
                 message,
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errorResponse);
+    }
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ErrorResponse> handleTwilioApiException(
+            ApiException ex,
+            HttpServletRequest request) {
+
+        log.error("Twilio API error: {}", ex.getMessage(), ex);
+
+        String message;
+        if (ex.getMessage().contains("not a valid phone number")) {
+            message = "Invalid phone number format. Please use E.164 format (e.g., +1234567890).";
+        } else if (ex.getMessage().contains("authentication")) {
+            message = "Twilio authentication failed. Please check your credentials.";
+        } else if (ex.getMessage().contains("insufficient funds")) {
+            message = "Twilio account has insufficient funds.";
+        } else {
+            message = "Failed to send SMS/MMS: " + ex.getMessage();
+        }
+
+        ErrorResponse errorResponse = ErrorResponse.of(
+                HttpStatus.BAD_GATEWAY.value(),
+                "SMS Service Error",
+                message,
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errorResponse);
+    }
+
+    @ExceptionHandler(TwilioException.class)
+    public ResponseEntity<ErrorResponse> handleTwilioException(
+            TwilioException ex,
+            HttpServletRequest request) {
+
+        log.error("Twilio error: {}", ex.getMessage(), ex);
+
+        ErrorResponse errorResponse = ErrorResponse.of(
+                HttpStatus.BAD_GATEWAY.value(),
+                "SMS Service Error",
+                "Twilio service error: " + ex.getMessage(),
                 request.getRequestURI()
         );
 
