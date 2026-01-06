@@ -1,4 +1,4 @@
-package com.romantic_messenger.romanticmessenger.tts.config;
+package com.romantic_messenger.romanticmessenger.claude.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

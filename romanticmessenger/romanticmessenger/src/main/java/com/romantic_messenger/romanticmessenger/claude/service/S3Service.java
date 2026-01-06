@@ -1,4 +1,4 @@
-package com.romantic_messenger.romanticmessenger.tts.service;
+package com.romantic_messenger.romanticmessenger.claude.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

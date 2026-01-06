@@ -1,4 +1,4 @@
-package com.romantic_messenger.romanticmessenger.twilio.config;
+package com.romantic_messenger.romanticmessenger.claude.utils;
 
 import com.twilio.Twilio;
 import jakarta.annotation.PostConstruct;
