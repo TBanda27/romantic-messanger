@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.polly.model.PollyException;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -192,6 +193,34 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_GATEWAY.value(),
                 "Text-to-Speech Service Error",
                 "Failed to convert text to speech: " + ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errorResponse);
+    }
+
+    @ExceptionHandler(S3Exception.class)
+    public ResponseEntity<ErrorResponse> handleS3Exception(
+            S3Exception ex,
+            HttpServletRequest request) {
+
+        log.error("S3 error: {}", ex.getMessage(), ex);
+
+        String message;
+        if (ex.statusCode() == 301) {
+            message = "S3 bucket region mismatch. Please check your S3 bucket region configuration.";
+        } else if (ex.statusCode() == 403) {
+            message = "Access denied to S3 bucket. Please check your AWS credentials and bucket permissions.";
+        } else if (ex.statusCode() == 404) {
+            message = "S3 bucket not found. Please check your bucket name configuration.";
+        } else {
+            message = "Failed to upload file to S3: " + ex.getMessage();
+        }
+
+        ErrorResponse errorResponse = ErrorResponse.of(
+                HttpStatus.BAD_GATEWAY.value(),
+                "S3 Storage Error",
+                message,
                 request.getRequestURI()
         );
 

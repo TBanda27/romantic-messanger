@@ -1,9 +1,8 @@
 package com.romantic_messenger.romanticmessenger.tts.controller;
 
 import com.romantic_messenger.romanticmessenger.tts.service.AmazonPollyTTSService;
+import com.romantic_messenger.romanticmessenger.tts.service.S3Service;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,26 +16,21 @@ import java.io.IOException;
 @Slf4j
 public class AmazonPollyTTSController {
     private final AmazonPollyTTSService amazonPollyTTSService;
+    private final S3Service s3Service;
 
-
-    public AmazonPollyTTSController(AmazonPollyTTSService amazonPollyTTSService) {
+    public AmazonPollyTTSController(AmazonPollyTTSService amazonPollyTTSService, S3Service s3Service) {
         this.amazonPollyTTSService = amazonPollyTTSService;
+        this.s3Service = s3Service;
     }
 
     @PostMapping
-    public ResponseEntity<byte[]> convertTextToSpeech(@RequestBody String text) throws IOException {
-        log.info("Converting text to Speech");
+    public ResponseEntity<String> convertTextToSpeech(@RequestBody String text) throws IOException {
+        log.info("Converting text to Speech for text: {}", text);
 
         byte[] audioBytes = amazonPollyTTSService.convertTextToSpeech(text);
+        String publicUrl = s3Service.uploadAudioFile(audioBytes);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("audio/mpeg"));
-        headers.set("Content-Disposition", "attachment; filename=audio.mp3");
-
-        log.info("Convertion Successful");
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(audioBytes);
+        log.info("Processing completed. Audio file URL: {}", publicUrl);
+        return ResponseEntity.ok(publicUrl);
     }
-
 }
