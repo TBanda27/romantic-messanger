@@ -237,7 +237,11 @@ public class GlobalExceptionHandler {
         log.error("Twilio API error: {}", ex.getMessage(), ex);
 
         String message;
-        if (ex.getMessage().contains("not a valid phone number")) {
+        if (ex.getMessage().contains("unverified")) {
+            message = "The recipient phone number is unverified. ";
+        } else if (ex.getMessage().contains("Permission to send") && ex.getMessage().contains("region")) {
+            message = "SMS permissions are not enabled for this region. .";
+        } else if (ex.getMessage().contains("not a valid phone number")) {
             message = "Invalid phone number format. Please use E.164 format (e.g., +1234567890).";
         } else if (ex.getMessage().contains("authentication")) {
             message = "Twilio authentication failed. Please check your credentials.";

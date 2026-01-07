@@ -15,7 +15,7 @@ public record RomanticMessageRequest(
     String phoneNumber,
 
     @NotBlank(message = "Book theme is required")
-    @Size(min = 10, max = 200, message = "Book theme must be between 10 and 200 characters")
+    @Size(min = 5, max = 200, message = "Book theme must be between 10 and 200 characters")
     @EnglishLanguage
     @ValidBookTheme
     String bookTheme

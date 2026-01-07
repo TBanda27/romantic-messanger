@@ -1,5 +1,8 @@
 package com.romantic_messenger.romanticmessenger.orchestration.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum PipelineStage {
     REQUESTED("Job requested, queued for processing"),
     GENERATING_MESSAGE("Generating romantic message via Claude AI"),
@@ -18,17 +21,13 @@ public enum PipelineStage {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public boolean isTerminal() {
         return this == COMPLETED || this == FAILED;
     }
 
     public int getProgressPercentage() {
         return switch (this) {
-            case REQUESTED -> 0;
+            case REQUESTED, FAILED -> 0;
             case GENERATING_MESSAGE -> 10;
             case MESSAGE_GENERATED -> 25;
             case CONVERTING_TO_AUDIO -> 40;
@@ -37,7 +36,6 @@ public enum PipelineStage {
             case UPLOADED -> 85;
             case SENDING_MMS -> 90;
             case COMPLETED -> 100;
-            case FAILED -> 0;
         };
     }
 }
