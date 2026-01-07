@@ -86,12 +86,12 @@
             margin-bottom: 0.75rem;
             border-radius: 10px;
             background: white;
-            transition: all 0.3s ease;
+            transition: all 0.5s ease, opacity 0.5s ease;
             border-left: 4px solid #e9ecef;
         }
 
         .stage-item.pending {
-            opacity: 0.5;
+            opacity: 1;
         }
 
         .stage-item.active {
@@ -369,12 +369,22 @@
 
         let pollInterval = null;
         let currentJobId = null;
+        let revealedStages = new Set(); // Track which stages have been revealed
 
-        // Initialize stage tracker
+        // Initialize stage tracker (start empty)
         function initStageTracker() {
             const container = document.getElementById('stageContainer');
-            container.innerHTML = stages.filter(s => s.name !== 'FAILED').map((stage, index) => `
-                <div class="stage-item pending" id="stage-${stage.name}">
+            container.innerHTML = ''; // Start with empty container
+            revealedStages.clear(); // Clear revealed stages
+        }
+
+        // Add a stage to the UI (progressive reveal)
+        function addStageToUI(stage) {
+            if (revealedStages.has(stage.name)) return; // Already revealed
+
+            const container = document.getElementById('stageContainer');
+            const stageHtml = `
+                <div class="stage-item pending fade-in" id="stage-${stage.name}" style="opacity: 0;">
                     <div class="stage-icon">
                         <i class="${stage.icon}"></i>
                     </div>
@@ -383,7 +393,18 @@
                         <p class="stage-description">${stage.name.replace(/_/g, ' ')}</p>
                     </div>
                 </div>
-            `).join('');
+            `;
+
+            container.insertAdjacentHTML('beforeend', stageHtml);
+            revealedStages.add(stage.name);
+
+            // Animate appearance
+            setTimeout(() => {
+                const element = document.getElementById('stage-' + stage.name);
+                if (element) {
+                    element.style.opacity = '1';
+                }
+            }, 10);
         }
 
         // Update stage UI
@@ -391,10 +412,18 @@
             // Update progress bar
             document.getElementById('overallProgress').style.width = progressPercentage + '%';
 
+            const currentStageIndex = stages.findIndex(s => s.name === currentStage);
+
             // Handle FAILED state specially
             if (currentStage === 'FAILED' && errorStage) {
                 const errorStageIndex = stages.findIndex(s => s.name === errorStage);
 
+                // Reveal all stages up to and including the failed stage
+                for (let i = 0; i <= errorStageIndex; i++) {
+                    addStageToUI(stages[i]);
+                }
+
+                // Update stage states
                 stages.forEach((stage, index) => {
                     const element = document.getElementById('stage-' + stage.name);
                     if (!element) return;
@@ -402,19 +431,21 @@
                     element.classList.remove('pending', 'active', 'completed', 'failed');
 
                     if (stage.name === errorStage) {
-                        // Mark the failed stage as failed (red)
                         element.classList.add('failed');
                     } else if (index < errorStageIndex) {
-                        // Mark previous stages as completed (green)
                         element.classList.add('completed');
-                    } else {
-                        // Mark subsequent stages as pending (gray)
-                        element.classList.add('pending');
                     }
                 });
             } else {
-                // Normal stage progression
-                stages.forEach(stage => {
+                // Progressive reveal: only show stages up to current + 1 (next stage)
+                for (let i = 0; i <= Math.min(currentStageIndex, stages.length - 1); i++) {
+                    if (stages[i].name !== 'FAILED') {
+                        addStageToUI(stages[i]);
+                    }
+                }
+
+                // Update stage states for revealed stages
+                stages.forEach((stage, index) => {
                     const element = document.getElementById('stage-' + stage.name);
                     if (!element) return;
 
@@ -422,7 +453,7 @@
 
                     if (stage.name === currentStage) {
                         element.classList.add('active');
-                    } else if (stages.findIndex(s => s.name === currentStage) > stages.findIndex(s => s.name === stage.name)) {
+                    } else if (index < currentStageIndex) {
                         element.classList.add('completed');
                     } else {
                         element.classList.add('pending');

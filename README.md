@@ -36,23 +36,23 @@ A web application that generates romantic messages using claude-ai based on book
 
 ## 🚀 Live Demo
 
-🔗 **[Try it here!](https://your-app.onrender.com)**
+🔗 **[Try it here!](https://romantic-messanger.onrender.com)**
 
 ## 📸 How It Works
 
 ### Pipeline Progress
 Real-time visualization of all 9 stages:
-1. ⏳ Job Requested
-2. 🤖 Generating Message (Claude AI)
-3. ✅ Message Generated
-4. 🔊 Converting to Audio (Polly)
-5. 🎵 Audio Converted
-6. ☁️ Uploading to S3
-7. ✅ Upload Complete
-8. 📤 Sending MMS (Twilio)
-9. ✅ Completed
+1. Job Requested
+2. Generating Message (Claude AI)
+3. Message Generated
+4. Converting to Audio (Polly)
+5. Audio Converted
+6. Uploading to S3
+7. Upload Complete
+8. Sending MMS (Twilio)
+9. Completed
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 User Input (Phone + Theme)
@@ -194,4 +194,4 @@ This project is licensed under the MIT License.
 
 ---
 
-Made with ❤️ 
+Made with ❤️ by TBanda
