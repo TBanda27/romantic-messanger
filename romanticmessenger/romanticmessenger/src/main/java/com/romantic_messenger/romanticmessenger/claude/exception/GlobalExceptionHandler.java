@@ -233,7 +233,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTwilioApiException(
             ApiException ex,
             HttpServletRequest request) {
-
         log.error("Twilio API error: {}", ex.getMessage(), ex);
 
         String message;
